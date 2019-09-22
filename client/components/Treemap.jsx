@@ -15,7 +15,6 @@ export default class Treemap extends React.Component {
 
   componentDidMount() {
     this.treemap = this.createTreemap();
-    window.addEventListener('resize', this.resize);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -37,17 +36,17 @@ export default class Treemap extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.resize);
     this.treemap.dispose();
   }
 
   render() {
     return (
-      <ResizeAware {...this.props}
-        style={{position: 'relative'}}
+      <ResizeAware className={s.container}
         onlyEvent
         onResize={this.handleResize}>
-        <div ref={this.saveNodeRef} className={s.map}/>
+        <div ref={this.saveNodeRef}
+          className={s.map}
+          onMouseLeave={this.handleMouseLeave}/>
       </ResizeAware>
     );
   }
@@ -55,6 +54,10 @@ export default class Treemap extends React.Component {
   handleResize = _.debounce(() => {
     this.resize();
   }, 200);
+
+  handleMouseLeave = () => {
+    this.props.onMouseLeave();
+  }
 
   saveNodeRef = node => (this.node = node);
 
@@ -108,6 +111,9 @@ export default class Treemap extends React.Component {
        * @returns {void}
        */
       onGroupClick(event) {
+        component.props.onGroupSelect(event.group);
+      },
+      onGroupDoubleClick(event) {
         preventDefault(event);
         if ((event.ctrlKey || event.secondary) && props.onGroupSecondaryClick) {
           props.onGroupSecondaryClick.call(component, event);
@@ -116,7 +122,6 @@ export default class Treemap extends React.Component {
         component.zoomOutDisabled = false;
         this.zoom(event.group);
       },
-      onGroupDoubleClick: preventDefault,
       onGroupHover(event) {
         // Ignoring hovering on `FoamTree` branding group
         if (event.group && event.group.attribution) {

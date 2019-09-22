@@ -4,17 +4,25 @@ import {isChunkParsed, walkModules} from './utils';
 export class Store {
   cid = 0;
   sizes = new Set(['statSize', 'parsedSize', 'gzipSize']);
+  modulesById = new Map();
 
   @observable.ref allChunks;
   @observable.shallow selectedChunks;
   @observable searchQuery = '';
   @observable defaultSize;
   @observable selectedSize;
+  @observable.ref selectedModule;
   @observable showConcatenatedModulesContent = false;
 
   setModules(modules) {
+    this.modulesById.clear();
+
     walkModules(modules, module => {
       module.cid = this.cid++;
+
+      if (module.id) {
+        this.modulesById.set(module.id, module);
+      }
     });
 
     this.allChunks = modules;

@@ -46,11 +46,14 @@ module.exports = opts => {
           terserOptions: {
             output: {
               comments: /copyright/iu
-            },
-            safari10: true
+            }
           }
         })
       ]
+    },
+
+    performance: {
+      hints: false
     },
 
     module: {

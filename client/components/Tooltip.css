@@ -9,6 +9,7 @@
   position: absolute;
   transition: opacity .2s ease, visibility .2s ease;
   visibility: visible;
+  word-break: break-word;
 }
 
 .hidden {
